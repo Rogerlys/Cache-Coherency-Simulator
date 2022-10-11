@@ -20,10 +20,9 @@ public class Main {
         int cacheSize = Integer.parseInt(args[3]);
         int associativity = Integer.parseInt(args[4]);
         int blockSize = Integer.parseInt(args[5]);
-        MESI mesi = new MESI(cacheSize, associativity, blockSize, "bodytrack_four/bodytrack_0.data");
-        String s = mesi.readInstructions();
-        System.out.println(s);
-
+        //MESI MESI = new MESI();
+        MesiProcessor processor = new MesiProcessor(cacheSize, associativity, blockSize, "bodytrack_four/bodytrack_0.data");
+        processor.executeInstructions();
 
     }
 }

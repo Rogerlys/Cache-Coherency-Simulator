@@ -1,34 +1,33 @@
 import java.util.*;
-class LRUCache {
+
+class MESILRUCache {
     HashMap<Integer, Node> hmap;
     Node head;
     Node end;
     int capacity;
-    public LRUCache(int capacity) {
+    public MESILRUCache(int capacity) {
         hmap = new HashMap();
         this.capacity = capacity;
     }
 
-    public int get(int key) {
+    public boolean contains(int key) {
         if (!hmap.containsKey(key)) {
-            return -1;
+            return false;
         }
         if (hmap.get(key) != end) {
             moveToEnd(key);
-
-
         }
         // print();
-        return hmap.get(key).value;
+        return true;
     }
 
-    public void put(int key, int value) {
+    public void put(int key) {
         if (hmap.containsKey(key)) {
             moveToEnd(key);
-            hmap.get(key).value = value;
+
             return;
         } else {
-            Node n = new Node(key, value);
+            Node n = new Node(key);
 
 
             if (head == null) {
@@ -43,13 +42,17 @@ class LRUCache {
 
             hmap.put(key, n);
         }
+
+        // todo when we evict the block need to check if need to write back
         if(hmap.size() > capacity) {
             hmap.remove(head.key);
             head.next.prev = null;
             head = head.next;
         }
-        //print();
+
     }
+
+
 
     void moveToEnd(int key) {
         Node n = hmap.get(key);
@@ -78,36 +81,31 @@ class LRUCache {
 
     }
 
-    void print() {
-        Node h = head;
-        System.out.print("head");
-        while (h != null) {
-
-            System.out.print(h.key + " ");
-            h = h.next;
+    boolean readCache(int tag) {
+        if (contains(tag)) {
+            Node block = hmap.get(tag);
+            block.setState('S');
+            return true;
+        } else {
+            put(tag);
         }
-        System.out.println();
-        Node e = end;
-        System.out.print("end");
-        while (e != null) {
+        return false;
+    }
 
-            System.out.print(e.key + " ");
-            e = e.prev;
+    boolean writeCahce(int tag) {
+        if (contains(tag)) {
+            Node block = hmap.get(tag);
+            if (block.canWrite()) {
+                return true;
+            }
+            block.setState('M');
+
+        } else {
+            put(tag);
+            Node block = hmap.get(tag);
+            block.setState('M');
+            return false;
         }
-        System.out.println();
-
+        return false;
     }
-
-    public void setWrite(int i) {
-        hmap.get(i).isWrite= true;
-    }
-
-    public boolean isWrite(int i) {
-        return hmap.get(i).isWrite;
-    }
-
-    public void setRead(int i) {
-        hmap.get(i).isWrite= false;
-    }
-
 }
