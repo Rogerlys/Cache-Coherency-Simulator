@@ -1,15 +1,15 @@
-public class Node {
-    Node prev;
-    Node next;
+public class CacheLine {
+    CacheLine prev;
+    CacheLine next;
     int key;
     boolean isValid;
     boolean isDirty;
     char state;
-    Node(int key) {
+    CacheLine(int key) {
         this.key  = key;
         isDirty = false;
         isValid = true;
-        state = 'I';
+        state = 'S';
 
     }
 
@@ -17,7 +17,9 @@ public class Node {
         this.state = state;
     }
 
-    public boolean canWrite() {
-        return state == 'M' || state == 'E';
+    public char getState() {
+        return state;
     }
+
+
 }

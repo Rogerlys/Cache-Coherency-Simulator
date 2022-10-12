@@ -1,4 +1,5 @@
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class Main {
 
@@ -21,8 +22,23 @@ public class Main {
         int associativity = Integer.parseInt(args[4]);
         int blockSize = Integer.parseInt(args[5]);
         //MESI MESI = new MESI();
-        MesiProcessor processor = new MesiProcessor(cacheSize, associativity, blockSize, "bodytrack_four/bodytrack_0.data");
-        processor.executeInstructions();
+        Bus bus = new Bus();
+        ArrayList<MesiProcessor> processors = new ArrayList<>();
+        for (int i = 0; i < 4;i++) {
+            //"bodytrack_four/bodytrack_0.data"
+            String filePath = String.format("%s_four/%s_%d.data", dataType, dataType, i);
+            MesiProcessor processor = new MesiProcessor(cacheSize, associativity, blockSize,  filePath, bus);
+            processors.add(processor);
+        }
+
+        for (MesiProcessor mp : processors) {
+            bus.addCache(mp.mesiCache);
+        }
+        for (MesiProcessor mp : processors) {
+           mp.executeInstructions();
+        }
+
+
 
     }
 }

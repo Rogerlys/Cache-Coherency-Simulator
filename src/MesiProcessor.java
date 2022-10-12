@@ -12,16 +12,12 @@ public class MesiProcessor {
     int set;
     int tag;
     InstructionReader reader;
-    MesiProcessor(int cacheSize, int associativity, int blockSize, String inputFile) throws FileNotFoundException {
-        mesiCache = new MESI(cacheSize, associativity, blockSize);
+    MesiProcessor(int cacheSize, int associativity, int blockSize, String inputFile, Bus bus) throws FileNotFoundException {
+        mesiCache = new MESI(cacheSize, associativity, blockSize, bus);
         reader = new InstructionReader(inputFile);
 
     }
 
-    void readInstruction() throws IOException {
-        Instruction next = reader.getNextInstruction();
-        reader.fetchNextIntruction();
-    }
 
     //todo change this to tick one clock cycle
     void executeInstructions() throws IOException {

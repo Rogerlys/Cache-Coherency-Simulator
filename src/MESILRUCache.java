@@ -1,9 +1,9 @@
 import java.util.*;
 
 class MESILRUCache {
-    HashMap<Integer, Node> hmap;
-    Node head;
-    Node end;
+    HashMap<Integer, CacheLine> hmap;
+    CacheLine head;
+    CacheLine end;
     int capacity;
     public MESILRUCache(int capacity) {
         hmap = new HashMap();
@@ -11,7 +11,7 @@ class MESILRUCache {
     }
 
     public boolean contains(int key) {
-        if (!hmap.containsKey(key)) {
+        if (!hmap.containsKey(key) || hmap.get(key).getState() == 'I') {
             return false;
         }
         if (hmap.get(key) != end) {
@@ -27,7 +27,7 @@ class MESILRUCache {
 
             return;
         } else {
-            Node n = new Node(key);
+            CacheLine n = new CacheLine(key);
 
 
             if (head == null) {
@@ -55,7 +55,7 @@ class MESILRUCache {
 
 
     void moveToEnd(int key) {
-        Node n = hmap.get(key);
+        CacheLine n = hmap.get(key);
         if(n == end) {
 
         }
@@ -81,31 +81,7 @@ class MESILRUCache {
 
     }
 
-    boolean readCache(int tag) {
-        if (contains(tag)) {
-            Node block = hmap.get(tag);
-            block.setState('S');
-            return true;
-        } else {
-            put(tag);
-        }
-        return false;
-    }
-
-    boolean writeCahce(int tag) {
-        if (contains(tag)) {
-            Node block = hmap.get(tag);
-            if (block.canWrite()) {
-                return true;
-            }
-            block.setState('M');
-
-        } else {
-            put(tag);
-            Node block = hmap.get(tag);
-            block.setState('M');
-            return false;
-        }
-        return false;
+    public CacheLine getCacheLine(int tag) {
+        return hmap.get(tag);
     }
 }
