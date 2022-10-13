@@ -12,6 +12,8 @@ public class MESI extends Cache{
     int numMiss = 0;
     int totalInstruction = 0;
     Bus bus;
+    int cpuTime;
+    int idleTime;
     MESI(int cacheSize, int associativity, int blockSize, Bus bus) {
         this.cacheSize = cacheSize;
         this.associativity = associativity;
@@ -26,6 +28,8 @@ public class MESI extends Cache{
             sets[i] = new MESILRUCache(associativity);
         }
         this.bus = bus;
+        cpuTime = 0;
+        idleTime = 0;
     }
 
     static int log2(int x) {
@@ -51,19 +55,19 @@ public class MESI extends Cache{
             write(i.address);
             totalInstruction++;
 
+        } else if(i.value == 2) {
+            cpuTime += i.address;
         }
     }
 
     void read(long address) {
         if (contains(address)) {
-
+            cpuTime++;
             return;
         }
         numMiss++;
         load(address);
-        if (bus.otherCacheContainsCache(address, this)) {
-            // cache to cache sharing
-        }
+
 
     }
 
@@ -72,6 +76,8 @@ public class MESI extends Cache{
         if (!contains(address)) {
             load(address);
             miss = true;
+        } else {
+            cpuTime++;
         }
         CacheLine cacheLine = getCacheLine(address);
         if (cacheLine.getState() != 'M' || cacheLine.getState() != 'E') {
@@ -86,13 +92,16 @@ public class MESI extends Cache{
     int load(long address) {
         if (bus.otherCacheContainsCache(address, this)) {
             // cache to cache sharing
+            idleTime += 2;
         } else {
             // load from memory
+            idleTime += 100;
         }
         int setIndex = getSetIndex(address);
         MESILRUCache cacheSet = sets[setIndex];
         tag = getTag(address);
-        cacheSet.put(tag);
+        int evictTime = cacheSet.put(tag);
+
         return 0;
     }
 

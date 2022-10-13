@@ -25,7 +25,7 @@ public class MesiProcessor {
             mesiCache.executeInstruction(reader.getNextInstruction());
         }
         System.out.println(String.format("load:%d store:%d", reader.numLoad, reader.numStore));
-        System.out.println(String.format("miss rate %d/%d", mesiCache.numMiss, mesiCache.totalInstruction));
+        System.out.println(String.format("miss rate %d/%d CPU time %d idle Time %d", mesiCache.numMiss, mesiCache.totalInstruction, mesiCache.cpuTime, mesiCache.idleTime));
     }
 
 }

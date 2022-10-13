@@ -21,11 +21,11 @@ class MESILRUCache {
         return true;
     }
 
-    public void put(int key) {
+    public int put(int key) {
         if (hmap.containsKey(key)) {
             moveToEnd(key);
 
-            return;
+            return 0;
         } else {
             CacheLine n = new CacheLine(key);
 
@@ -48,7 +48,9 @@ class MESILRUCache {
             hmap.remove(head.key);
             head.next.prev = null;
             head = head.next;
+            return 100;
         }
+        return 0;
 
     }
 
