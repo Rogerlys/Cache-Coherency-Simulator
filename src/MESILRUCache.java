@@ -20,46 +20,36 @@ class MESILRUCache {
         if (hmap.get(key) != end) {
             moveToEnd(key);
         }
-        // print();
         return true;
     }
 
     public void put(int key) {
         if (hmap.containsKey(key)) {
             moveToEnd(key);
-
             return;
         } else {
             CacheLine n = new CacheLine(key);
-
-
             if (head == null) {
                 head = n;
-
             }
             if (end != null) {
                 end.next = n;
                 n.prev = end;
             }
             end = n;
-
             hmap.put(key, n);
         }
 
-        // todo when we evict the block need to check if need to write back
-        if(hmap.size() > capacity) {
+        if (hmap.size() > capacity) {
+            if (head.getDirty()) {
+                // write back to cache
+                logger.incrementIdleTime(100);
+            }
             hmap.remove(head.key);
             head.next.prev = null;
             head = head.next;
-
-            // write back to cache
-            logger.incrementIdleTime(100);
-
         }
-
     }
-
-
 
     void moveToEnd(int key) {
         CacheLine n = hmap.get(key);

@@ -21,5 +21,11 @@ public class CacheLine {
         return state;
     }
 
+    public void setDirty() {
+        isDirty = true;
+    }
 
+    public boolean getDirty() {
+        return isDirty;
+    }
 }
