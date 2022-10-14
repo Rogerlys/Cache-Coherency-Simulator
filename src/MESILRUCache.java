@@ -1,3 +1,4 @@
+import java.sql.Time;
 import java.util.*;
 
 class MESILRUCache {
@@ -5,9 +6,11 @@ class MESILRUCache {
     CacheLine head;
     CacheLine end;
     int capacity;
-    public MESILRUCache(int capacity) {
+    TimeLogger logger;
+    public MESILRUCache(int capacity, TimeLogger logger) {
         hmap = new HashMap();
         this.capacity = capacity;
+        this.logger = logger;
     }
 
     public boolean contains(int key) {
@@ -21,11 +24,11 @@ class MESILRUCache {
         return true;
     }
 
-    public int put(int key) {
+    public void put(int key) {
         if (hmap.containsKey(key)) {
             moveToEnd(key);
 
-            return 0;
+            return;
         } else {
             CacheLine n = new CacheLine(key);
 
@@ -48,9 +51,11 @@ class MESILRUCache {
             hmap.remove(head.key);
             head.next.prev = null;
             head = head.next;
-            return 100;
+
+            // write back to cache
+            logger.incrementIdleTime(100);
+
         }
-        return 0;
 
     }
 

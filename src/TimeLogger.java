@@ -7,10 +7,12 @@ public class TimeLogger {
     }
 
     void incrementIdleTime(long i) {
+
         idleTime += i;
     }
 
     void incrementComputeTime(long i) {
+
         computeTime += i;
     }
 }

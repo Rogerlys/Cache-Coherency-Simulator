@@ -27,7 +27,7 @@ public class MESI extends Cache{
         tag = offset + set;
         sets = new MESILRUCache[numSets];
         for (int i = 0; i < numSets;i++) {
-            sets[i] = new MESILRUCache(associativity);
+            sets[i] = new MESILRUCache(associativity, logger);
         }
         this.bus = bus;
         this.logger = logger;
@@ -49,6 +49,7 @@ public class MESI extends Cache{
     }
 
     void executeInstruction(Instruction i) {
+        //logger.incrementComputeTime(1);
         if (i.value == 0) {
             read(i.address);
             totalInstruction++;
@@ -64,7 +65,7 @@ public class MESI extends Cache{
 
     void read(long address) {
         if (contains(address)) {
-
+            logger.incrementIdleTime(1);
             return;
         }
         numMiss++;
@@ -79,7 +80,7 @@ public class MESI extends Cache{
             load(address);
             miss = true;
         } else {
-            logger.incrementComputeTime(1);
+            logger.incrementIdleTime(1);
         }
         CacheLine cacheLine = getCacheLine(address);
         if (cacheLine.getState() != 'M' || cacheLine.getState() != 'E') {
@@ -94,7 +95,7 @@ public class MESI extends Cache{
     int load(long address) {
         if (bus.otherCacheContainsCache(address, this)) {
             // cache to cache sharing
-            logger.incrementComputeTime(2);
+            logger.incrementIdleTime(2);
         } else {
             // load from memory
             logger.incrementIdleTime(100);
@@ -102,18 +103,11 @@ public class MESI extends Cache{
         int setIndex = getSetIndex(address);
         MESILRUCache cacheSet = sets[setIndex];
         tag = getTag(address);
-        int evictTime = cacheSet.put(tag);
+       cacheSet.put(tag);
 
         return 0;
     }
 
-    int store(long address) {
-        int setIndex = getSetIndex(address);
-        MESILRUCache cacheSet = sets[setIndex];
-        tag = getTag(address);
-
-        return 0;
-    }
 
     CacheLine getCacheLine(long address) {
         int setIndex = getSetIndex(address);
