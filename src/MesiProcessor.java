@@ -11,10 +11,13 @@ public class MesiProcessor {
     int offset;
     int set;
     int tag;
+    TimeLogger logger;
     InstructionReader reader;
     MesiProcessor(int cacheSize, int associativity, int blockSize, String inputFile, Bus bus) throws FileNotFoundException {
-        mesiCache = new MESI(cacheSize, associativity, blockSize, bus);
+        logger = new TimeLogger();
+        mesiCache = new MESI(cacheSize, associativity, blockSize, bus, logger);
         reader = new InstructionReader(inputFile);
+
 
     }
 
@@ -25,7 +28,7 @@ public class MesiProcessor {
             mesiCache.executeInstruction(reader.getNextInstruction());
         }
         System.out.println(String.format("load:%d store:%d", reader.numLoad, reader.numStore));
-        System.out.println(String.format("miss rate %d/%d CPU time %d idle Time %d", mesiCache.numMiss, mesiCache.totalInstruction, mesiCache.cpuTime, mesiCache.idleTime));
+        System.out.println(String.format("miss rate %d/%d CPU time %d idle Time %d", mesiCache.numMiss, mesiCache.totalInstruction, logger.computeTime, logger.idleTime));
     }
 
 }

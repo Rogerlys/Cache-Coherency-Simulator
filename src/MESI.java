@@ -1,3 +1,5 @@
+import java.sql.Time;
+
 public class MESI extends Cache{
     int associativity;
     int blockSize;
@@ -12,9 +14,9 @@ public class MESI extends Cache{
     int numMiss = 0;
     int totalInstruction = 0;
     Bus bus;
-    int cpuTime;
-    int idleTime;
-    MESI(int cacheSize, int associativity, int blockSize, Bus bus) {
+    TimeLogger logger;
+
+    MESI(int cacheSize, int associativity, int blockSize, Bus bus, TimeLogger logger) {
         this.cacheSize = cacheSize;
         this.associativity = associativity;
         this.blockSize = blockSize;
@@ -28,8 +30,8 @@ public class MESI extends Cache{
             sets[i] = new MESILRUCache(associativity);
         }
         this.bus = bus;
-        cpuTime = 0;
-        idleTime = 0;
+        this.logger = logger;
+
     }
 
     static int log2(int x) {
@@ -56,13 +58,13 @@ public class MESI extends Cache{
             totalInstruction++;
 
         } else if(i.value == 2) {
-            cpuTime += i.address;
+           logger.incrementComputeTime(i.address);
         }
     }
 
     void read(long address) {
         if (contains(address)) {
-            cpuTime++;
+
             return;
         }
         numMiss++;
@@ -77,7 +79,7 @@ public class MESI extends Cache{
             load(address);
             miss = true;
         } else {
-            cpuTime++;
+            logger.incrementComputeTime(1);
         }
         CacheLine cacheLine = getCacheLine(address);
         if (cacheLine.getState() != 'M' || cacheLine.getState() != 'E') {
@@ -92,10 +94,10 @@ public class MESI extends Cache{
     int load(long address) {
         if (bus.otherCacheContainsCache(address, this)) {
             // cache to cache sharing
-            idleTime += 2;
+            logger.incrementComputeTime(2);
         } else {
             // load from memory
-            idleTime += 100;
+            logger.incrementIdleTime(100);
         }
         int setIndex = getSetIndex(address);
         MESILRUCache cacheSet = sets[setIndex];
