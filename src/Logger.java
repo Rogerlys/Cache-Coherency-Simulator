@@ -49,7 +49,7 @@ public class Logger {
         System.out.printf("- Number of load instructions: %d%n", numLoad);
         System.out.printf("- Number of store instructions: %d%n", numStore);
         System.out.printf("- Number of idle cycles: %d%n", idleTime);
-        System.out.printf("- Data cache miss rate: %d%n", numMiss / totalInstruction);
+        System.out.printf("- Data cache miss rate: %f%n", (double) numMiss / totalInstruction);
         System.out.printf("- Bus data traffic: N/A%n");
         System.out.printf("- Number of invalidations/updates on the bus: N/A%n");
         System.out.printf("- Number of private data access: N/A%n");
