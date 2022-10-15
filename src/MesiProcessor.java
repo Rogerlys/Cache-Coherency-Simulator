@@ -19,12 +19,37 @@ public class MesiProcessor {
         reader = new InstructionReader(inputFile, logger);
     }
 
+    void executeOneCycle(long clockCycle) throws IOException {
+        if (logger.getTotalTime() > clockCycle) {
+            return;
+        }
+        if (reader.hasNext) {
+            executeInstruction();
+        }
+    }
+
+
     //todo change this to tick one clock cycle
     void executeInstructions() throws IOException {
         while(reader.fetchNextIntruction()) {
             mesiCache.executeInstruction(reader.getNextInstruction());
         }
         logger.printInfo();
+    }
+
+    void executeInstruction() throws IOException {
+        if (reader.fetchNextIntruction()) {
+            mesiCache.executeInstruction(reader.getNextInstruction());
+        }
+
+    }
+
+    void printInfo() {
+        logger.printInfo();
+    }
+
+    boolean hasNext() {
+        return reader.hasNext;
     }
 
 }

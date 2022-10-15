@@ -2,7 +2,14 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 public class Main {
-
+    private static boolean continueExecuetion(ArrayList<MesiProcessor> processors) {
+        for (MesiProcessor mp : processors) {
+            if (mp.hasNext()) {
+                return true;
+            }
+        }
+        return false;
+    }
     public static void main(String[] args) throws IOException {
 	// write your code here
         if (args.length < 6) {
@@ -34,11 +41,27 @@ public class Main {
         for (MesiProcessor mp : processors) {
             bus.addCache(mp.mesiCache);
         }
+        long clockCycle = 0;
+/*
         for (MesiProcessor mp : processors) {
-           mp.executeInstructions();
+            mp.executeInstructions();
         }
-
-
+*/
+        while (continueExecuetion(processors)) {
+            for (MesiProcessor mp : processors) {
+                mp.executeOneCycle(clockCycle);
+            }
+            clockCycle++;
+        }
+        long totalClock = 0;
+        for (MesiProcessor mp : processors) {
+            mp.printInfo();
+            totalClock += mp.logger.getTotalTime();
+        }
+        System.out.println(totalClock - 143315137);
+        System.out.println(bus.numInvalidate);
 
     }
+
+
 }
