@@ -5,18 +5,16 @@ import java.io.IOException;
 
 public class InstructionReader {
     String filePath;
+    Logger logger;
     BufferedReader br;
     boolean hasNext;
     Instruction nextInstruction;
-    int numStore;
-    int numLoad;
-    InstructionReader(String filePath) throws FileNotFoundException {
+    InstructionReader(String filePath, Logger logger) throws FileNotFoundException {
         this.filePath = filePath;
+        this.logger = logger;
         FileReader fr = new FileReader(filePath);
         br = new BufferedReader(fr);
         hasNext = true;
-        numLoad = 0;
-        numStore = 0;
     }
 
     boolean fetchNextIntruction() throws IOException {
@@ -27,9 +25,9 @@ public class InstructionReader {
         }
         nextInstruction = new Instruction(line);
         if (nextInstruction.value == 0) {
-            numLoad++;
+            logger.incrementLoad();
         } else if(nextInstruction.value == 1) {
-            numStore++;
+            logger.incrementStore();
         }
         return true;
     }

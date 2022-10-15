@@ -1,5 +1,3 @@
-import java.sql.Time;
-
 public class MESI extends Cache{
     int associativity;
     int blockSize;
@@ -11,12 +9,10 @@ public class MESI extends Cache{
     int offset;
     int set;
     int tag;
-    int numMiss = 0;
-    int totalInstruction = 0;
     Bus bus;
-    TimeLogger logger;
+    Logger logger;
 
-    MESI(int cacheSize, int associativity, int blockSize, Bus bus, TimeLogger logger) {
+    MESI(int cacheSize, int associativity, int blockSize, Bus bus, Logger logger) {
         this.cacheSize = cacheSize;
         this.associativity = associativity;
         this.blockSize = blockSize;
@@ -52,11 +48,11 @@ public class MESI extends Cache{
         //logger.incrementComputeTime(1);
         if (i.value == 0) {
             read(i.address);
-            totalInstruction++;
+            logger.incrementInstructionCount();
 
         } else if (i .value == 1){
             write(i.address);
-            totalInstruction++;
+            logger.incrementInstructionCount();
 
         } else if(i.value == 2) {
            logger.incrementComputeTime(i.address);
@@ -68,7 +64,7 @@ public class MESI extends Cache{
             logger.incrementIdleTime(1);
             return;
         }
-        numMiss++;
+        logger.incrementMiss();
         load(address);
     }
 
@@ -86,7 +82,7 @@ public class MESI extends Cache{
             miss = true;
         }
         if (miss) {
-            numMiss++;
+            logger.incrementMiss();
         }
 
         cacheLine.setDirty();

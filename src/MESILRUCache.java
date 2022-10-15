@@ -1,4 +1,3 @@
-import java.sql.Time;
 import java.util.*;
 
 class MESILRUCache {
@@ -6,8 +5,8 @@ class MESILRUCache {
     CacheLine head;
     CacheLine end;
     int capacity;
-    TimeLogger logger;
-    public MESILRUCache(int capacity, TimeLogger logger) {
+    Logger logger;
+    public MESILRUCache(int capacity, Logger logger) {
         hmap = new HashMap();
         this.capacity = capacity;
         this.logger = logger;
