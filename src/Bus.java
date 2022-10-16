@@ -8,6 +8,7 @@ public class Bus {
     }
     int numUpdate = 0;
     int numInvalidate = 0;
+    int trafficData = 0;
 
     void addCache(MESI mesi) {
         caches.add(mesi);

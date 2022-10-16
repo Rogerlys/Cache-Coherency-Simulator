@@ -61,6 +61,7 @@ public class MESI extends Cache{
     void read(long address) {
         if (contains(address)) {
             logger.incrementIdleTime(1);
+            logger.incrementPrivateDataAccess();
             return;
         }
         logger.incrementMiss();
@@ -73,16 +74,21 @@ public class MESI extends Cache{
             load(address);
             miss = true;
         } else {
+            logger.incrementPrivateDataAccess();
             logger.incrementIdleTime(1);
         }
         CacheLine cacheLine = getCacheLine(address);
         if (cacheLine.getState() != 'M' || cacheLine.getState() != 'E') {
             bus.invalidate(address);
+
             miss = true;
         }
         //bus.invalidate(address);
         if (miss) {
             logger.incrementMiss();
+
+        } else {
+            logger.incrementPrivateDataAccess();
         }
 
         cacheLine.setDirty();
@@ -94,7 +100,7 @@ public class MESI extends Cache{
         MESILRUCache cacheSet = sets[setIndex];
         int t = getTag(address);
         cacheSet.put(t);
-
+        logger.incrementPublicDataAccess();
         if (bus.otherCacheContainsCache(address, this)) {
             // cache to cache sharing
             bus.share(address);

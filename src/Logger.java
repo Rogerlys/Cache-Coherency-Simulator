@@ -7,6 +7,8 @@ public class Logger {
     long numStore;
     long numMiss;
     long totalInstruction;
+    long privateDataAccess;
+    long publicDataAccess;
 
     Logger() {
         this.coreNum = coreCount++;
@@ -16,6 +18,8 @@ public class Logger {
         this.numStore = 0;
         this.numMiss = 0;
         this.totalInstruction = 0;
+        privateDataAccess = 0;
+        publicDataAccess = 0;
     }
 
     void incrementIdleTime(long i) {
@@ -46,6 +50,13 @@ public class Logger {
         return idleTime + computeTime;
     }
 
+    void incrementPublicDataAccess() {
+        publicDataAccess++;
+    }
+    void incrementPrivateDataAccess() {
+        privateDataAccess++;
+    }
+
     void printInfo() {
         System.out.printf("Core: %d%n", coreNum);
         System.out.printf("- Execution cycles for core: %d%n", idleTime + computeTime);
@@ -56,8 +67,8 @@ public class Logger {
         System.out.printf("- Data cache miss rate: %d/%d %f%n", numMiss, totalInstruction, (double) numMiss / totalInstruction);
         System.out.printf("- Bus data traffic: N/A%n");
         System.out.printf("- Number of invalidations/updates on the bus: N/A%n");
-        System.out.printf("- Number of private data access: N/A%n");
-        System.out.printf("- Number of shared data access: N/A%n");
+        System.out.printf("- Number of private data access: %d%n", privateDataAccess);
+        System.out.printf("- Number of shared data access: %d", publicDataAccess);
         System.out.println();
     }
 }
