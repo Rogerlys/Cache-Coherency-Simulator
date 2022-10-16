@@ -7,6 +7,8 @@ public class Logger {
     long numStore;
     long numMiss;
     long totalInstruction;
+    long numPrivate;
+    long numPublic;
 
     Logger() {
         this.coreNum = coreCount++;
@@ -16,6 +18,8 @@ public class Logger {
         this.numStore = 0;
         this.numMiss = 0;
         this.totalInstruction = 0;
+        this.numPrivate = 0;
+        this.numPublic = 0;
     }
 
     void incrementIdleTime(long i) {
@@ -40,6 +44,14 @@ public class Logger {
 
     void incrementInstructionCount() {
         totalInstruction++;
+    }
+
+    void incrementPrivate() {
+        numPrivate++;
+    }
+
+    void incrementPublic() {
+        numPublic++;
     }
 
     long getTotalTime() {

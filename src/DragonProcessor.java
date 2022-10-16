@@ -18,6 +18,21 @@ public class DragonProcessor {
         reader = new InstructionReader(inputFile, logger);
     }
 
+    void executeOneCycle(long clockCycle) throws IOException {
+        if (logger.getTotalTime() > clockCycle) {
+            return;
+        }
+        if (reader.hasNext) {
+            executeInstruction();
+        }
+    }
+
+    void executeInstruction() throws IOException {
+        if (reader.fetchNextIntruction()) {
+            dragonCache.executeInstruction(reader.getNextInstruction());
+        }
+    }
+
     //todo change this to tick one clock cycle
     void executeInstructions() throws IOException {
         while(reader.fetchNextIntruction()) {
@@ -26,4 +41,11 @@ public class DragonProcessor {
         logger.printInfo();
     }
 
+    void printInfo() {
+        logger.printInfo();
+    }
+
+    boolean hasNext() {
+        return reader.hasNext;
+    }
 }

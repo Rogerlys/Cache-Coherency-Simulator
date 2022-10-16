@@ -3,14 +3,10 @@ public class DragonLRUCache extends LRUCache {
         super(capacity, logger);
     }
 
-    // todo custom removeHead method
     public void removeHead() {
-        if (head.getState() == 'M' || head.getState() == 'S') {
+        if (head.getState() == 'M' || head.getState() == 'D') {
             // write back to cache
             logger.incrementIdleTime(100);
-        }
-        if(head.getState() == 'S' || head.getState() == 'D') {
-
         }
         hmap.remove(head.key);
         head.next.prev = null;
