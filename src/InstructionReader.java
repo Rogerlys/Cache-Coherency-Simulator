@@ -19,6 +19,7 @@ public class InstructionReader {
 
     boolean fetchNextIntruction() throws IOException {
         String line = br.readLine();
+
         if (line == null) {
             hasNext = false;
             return false;
@@ -35,4 +36,6 @@ public class InstructionReader {
     Instruction getNextInstruction() {
         return nextInstruction;
     }
+
+
 }

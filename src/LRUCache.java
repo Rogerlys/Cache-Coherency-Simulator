@@ -18,6 +18,7 @@ public abstract class LRUCache {
     public void put(int key) {
         if (hmap.containsKey(key)) {
             moveToEnd(key);
+            hmap.get(key).setState('S');
             return;
         } else {
             CacheLine n = new CacheLine(key);

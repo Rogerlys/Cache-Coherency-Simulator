@@ -6,6 +6,8 @@ public class Bus<T extends Protocol> {
     Bus() {
         this.caches = new ArrayList<>();
     }
+    int numUpdate = 0;
+    int numInvalidate = 0;
 
     void addCache(T t) {
         caches.add(t);
