@@ -9,6 +9,43 @@ public class MESI extends Protocol {
         for (int i = 0; i < numSets;i++) {
             sets[i] = new MESILRUCache(associativity, logger);
         }
+        this.bus = bus;
+        this.logger = logger;
+
+    }
+
+    int getSetIndex(long address) {
+        int setMask = (numSets - 1) << offset;
+        return (int) (address & setMask) >> offset;
+    }
+    int getTag(long address) {
+        long tagMask = ((0xFFFFFFFF >> set) >> offset) << set << offset;
+        return (int) (address & tagMask) >> set >> offset;
+
+    }
+
+    void executeInstruction(Instruction i) {
+        if (i.value == 0) {
+            read(i.address);
+            logger.incrementInstructionCount();
+
+        } else if (i .value == 1){
+            write(i.address);
+            logger.incrementInstructionCount();
+
+        } else if(i.value == 2) {
+           logger.incrementComputeTime(i.address);
+        }
+    }
+
+    void read(long address) {
+        if (contains(address)) {
+            logger.incrementIdleTime(1);
+            logger.incrementPrivateDataAccess();
+            return;
+        }
+        logger.incrementMiss();
+        load(address);
     }
 
     void write(long address) {
@@ -17,16 +54,21 @@ public class MESI extends Protocol {
             load(address);
             miss = true;
         } else {
+            logger.incrementPrivateDataAccess();
             logger.incrementIdleTime(1);
         }
         CacheLine cacheLine = getCacheLine(address);
         if (cacheLine.getState() != 'M' || cacheLine.getState() != 'E') {
             bus.invalidate(address);
+
             miss = true;
         }
         //bus.invalidate(address);
         if (miss) {
             logger.incrementMiss();
+
+        } else {
+            logger.incrementPrivateDataAccess();
         }
 
         cacheLine.setDirty();
@@ -38,7 +80,7 @@ public class MESI extends Protocol {
         MESILRUCache cacheSet = sets[setIndex];
         int t = getTag(address);
         cacheSet.put(t);
-
+        logger.incrementPublicDataAccess();
         if (bus.otherCacheContainsCache(address, this)) {
             // cache to cache sharing
             bus.share(address);
