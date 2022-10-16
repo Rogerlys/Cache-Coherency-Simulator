@@ -1,26 +1,10 @@
-public class MESI extends Cache{
-    int associativity;
-    int blockSize;
+public class MESI extends Protocol {
+    MESIBus bus;
     MESILRUCache[] sets;
-    int cacheSize;
 
-    int numBlocks;
-    int numSets;
-    int offset;
-    int set;
-    int tag;
-    Bus bus;
-    Logger logger;
-
-    MESI(int cacheSize, int associativity, int blockSize, Bus bus, Logger logger) {
-        this.cacheSize = cacheSize;
-        this.associativity = associativity;
-        this.blockSize = blockSize;
-        numBlocks = cacheSize / blockSize;
-        numSets = numBlocks / associativity;
-        offset = log2(blockSize);
-        set = log2(numSets);
-        tag = offset + set;
+    MESI(int cacheSize, int associativity, int blockSize, MESIBus bus, Logger logger) {
+        super(cacheSize, associativity, blockSize, logger);
+        this.bus = bus;
         sets = new MESILRUCache[numSets];
         for (int i = 0; i < numSets;i++) {
             sets[i] = new MESILRUCache(associativity, logger);
@@ -28,10 +12,6 @@ public class MESI extends Cache{
         this.bus = bus;
         this.logger = logger;
 
-    }
-
-    static int log2(int x) {
-        return (int)(Math.log(x) / Math.log(2));
     }
 
     int getSetIndex(long address) {
@@ -111,10 +91,7 @@ public class MESI extends Cache{
             exclusive(address);
             logger.incrementIdleTime(100);
         }
-
-
     }
-
 
     CacheLine getCacheLine(long address) {
         int setIndex = getSetIndex(address);
@@ -126,20 +103,16 @@ public class MESI extends Cache{
         return cache.getCacheLine(tag);
     }
 
-    boolean invalidate(long address) {
+    void invalidate(long address) {
         int setIndex = getSetIndex(address);
         MESILRUCache cache = sets[setIndex];
         int tag = getTag(address);
         if (!cache.contains(tag)) {
-            return false;
+            return;
         }
 
         CacheLine m =  cache.getCacheLine(tag);
-        if (m.getState() != 'I') {
-            m.setState('I');
-            return true;
-        }
-        return false;
+        m.setState('I');
     }
 
     void share(long address) {
@@ -159,7 +132,6 @@ public class MESI extends Cache{
         MESILRUCache cache = sets[setIndex];
         int tag = getTag(address);
         if (!cache.contains(tag)) {
-
             return;
         }
 
@@ -175,6 +147,5 @@ public class MESI extends Cache{
             return false;
         }
         return cache.getCacheLine(tag).getState() != 'I';
-
     }
 }

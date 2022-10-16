@@ -2,7 +2,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 
 public class MesiProcessor {
-
     MESI mesiCache;
     String inputFile;
     int clock;
@@ -13,7 +12,8 @@ public class MesiProcessor {
     int tag;
     Logger logger;
     InstructionReader reader;
-    MesiProcessor(int cacheSize, int associativity, int blockSize, String inputFile, Bus bus) throws FileNotFoundException {
+
+    MesiProcessor(int cacheSize, int associativity, int blockSize, String inputFile, MESIBus bus) throws FileNotFoundException {
         logger = new Logger();
         mesiCache = new MESI(cacheSize, associativity, blockSize, bus, logger);
         reader = new InstructionReader(inputFile, logger);
@@ -28,7 +28,6 @@ public class MesiProcessor {
         }
     }
 
-
     //todo change this to tick one clock cycle
     void executeInstructions() throws IOException {
         while(reader.fetchNextIntruction()) {
@@ -41,7 +40,6 @@ public class MesiProcessor {
         if (reader.fetchNextIntruction()) {
             mesiCache.executeInstruction(reader.getNextInstruction());
         }
-
     }
 
     void printInfo() {
