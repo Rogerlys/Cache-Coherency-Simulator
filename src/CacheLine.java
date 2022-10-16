@@ -5,12 +5,12 @@ public class CacheLine {
     boolean isValid;
     boolean isDirty;
     char state;
+
     CacheLine(int key) {
         this.key  = key;
         isDirty = false;
         isValid = true;
         state = 'S';
-
     }
 
     public void setState(char state) {
