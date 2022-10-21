@@ -2,13 +2,12 @@ import java.util.*;
 
 public class Bus<T extends Protocol> {
     ArrayList<T> caches;
+    int trafficData;
 
     Bus() {
         this.caches = new ArrayList<>();
+        this.trafficData = 0;
     }
-    int numUpdate = 0;
-    int numInvalidate = 0;
-    int trafficData = 0;
 
     void addCache(T t) {
         caches.add(t);

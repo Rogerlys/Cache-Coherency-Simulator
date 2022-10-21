@@ -18,8 +18,8 @@ public class Logger {
         this.numStore = 0;
         this.numMiss = 0;
         this.totalInstruction = 0;
-        privateDataAccess = 0;
-        publicDataAccess = 0;
+        this.privateDataAccess = 0;
+        this.publicDataAccess = 0;
     }
 
     void incrementIdleTime(long i) {
@@ -53,6 +53,7 @@ public class Logger {
     void incrementPublicDataAccess() {
         publicDataAccess++;
     }
+
     void incrementPrivateDataAccess() {
         privateDataAccess++;
     }
