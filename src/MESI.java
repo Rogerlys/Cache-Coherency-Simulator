@@ -14,54 +14,6 @@ public class MESI extends Protocol {
 
     }
 
-    int getSetIndex(long address) {
-        int setMask = (numSets - 1) << offset;
-        return (int) (address & setMask) >> offset;
-    }
-    int getTag(long address) {
-        long tagMask = ((0xFFFFFFFF >> set) >> offset) << set << offset;
-        return (int) (address & tagMask) >> set >> offset;
-
-    }
-
-    void executeInstruction(Instruction i) {
-        if (i.value == 0) {
-            read(i.address);
-            logger.incrementInstructionCount();
-            countPrivatePublicAccess(i.address);
-
-        } else if (i .value == 1){
-            write(i.address);
-            logger.incrementInstructionCount();
-            countPrivatePublicAccess(i.address);
-
-        } else if(i.value == 2) {
-           logger.incrementComputeTime(i.address);
-        }
-    }
-
-    void read(long address) {
-        if (contains(address)) {
-            logger.incrementIdleTime(1);
-
-
-        } else {
-            logger.incrementMiss();
-            load(address);
-        }
-
-
-    }
-
-    void countPrivatePublicAccess(long address) {
-        CacheLine cacheLine = getCacheLine(address);
-        if (cacheLine.getState() == 'E' || cacheLine.getState() == 'M') {
-            logger.incrementPrivateDataAccess();
-        } else {
-            logger.incrementPublicDataAccess();
-        }
-    }
-
     void write(long address) {
         boolean miss = false;
         if (!contains(address)) {

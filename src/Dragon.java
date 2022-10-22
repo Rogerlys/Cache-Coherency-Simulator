@@ -11,36 +11,31 @@ public class Dragon extends Protocol {
         }
     }
 
-    // todo write miss calculation
     void write(long address) {
-        boolean miss = false;
         if (!contains(address)) {
             load(address);
-            miss = true;
+            logger.incrementMiss();
         } else {
             logger.incrementIdleTime(1);
         }
         CacheLine cacheLine = getCacheLine(address);
         if (cacheLine.getState() == 'E') {
             cacheLine.setState('M');
-        } else if(cacheLine.getState() == 'S') {
-            if(bus.otherCacheContainsCache(address, this)) {
-                bus.update(address);
+        } else if (cacheLine.getState() == 'S') {
+            if (bus.otherCacheContainsCache(address, this)) {
+                bus.update(address, blockSize);
                 cacheLine.setState('D');
             } else {
                 cacheLine.setState('M');
             }
-        } else if(cacheLine.getState() == 'D') {
-            if(bus.otherCacheContainsCache(address, this)) {
-                bus.update(address);
+        } else if (cacheLine.getState() == 'D') {
+            if (bus.otherCacheContainsCache(address, this)) {
+                bus.update(address, blockSize);
             } else {
                 cacheLine.setState('M');
             }
         }
-
-        if (miss) {
-            logger.incrementMiss();
-        }
+        countPrivatePublicAccess(address);
     }
 
     void load(long address) {
@@ -53,6 +48,7 @@ public class Dragon extends Protocol {
             // cache to cache sharing
             bus.share(address);
             logger.incrementIdleTime(2 * (blockSize / 4));
+            logger.incrementDataTraffic();
         } else {
             // load from memory
             exclusive(address);
@@ -71,14 +67,12 @@ public class Dragon extends Protocol {
         int setIndex = getSetIndex(address);
         DragonLRUCache cache = sets[setIndex];
         int tag = getTag(address);
-        if (!cache.contains(tag)) {
-            return;
-        }
+        if (!cache.contains(tag)) return;
 
         CacheLine d = cache.getCacheLine(tag);
-        if(d.getState() == 'M') {
+        if (d.getState() == 'M') {
             d.setState('D');
-        } else if(d.getState() == 'E') {
+        } else if (d.getState() == 'E') {
             d.setState('S');
         }
     }
@@ -87,9 +81,7 @@ public class Dragon extends Protocol {
         int setIndex = getSetIndex(address);
         DragonLRUCache cache = sets[setIndex];
         int tag = getTag(address);
-        if (!cache.contains(tag)) {
-            return;
-        }
+        if (!cache.contains(tag)) return;
 
         CacheLine m = cache.getCacheLine(tag);
         m.setState('E');
@@ -99,12 +91,10 @@ public class Dragon extends Protocol {
         int setIndex = getSetIndex(address);
         DragonLRUCache cache = sets[setIndex];
         int tag = getTag(address);
-        if (!cache.contains(tag)) {
-            return;
-        }
+        if (!cache.contains(tag)) return;
 
         CacheLine d =  cache.getCacheLine(tag);
-        if(d.getState() == 'D') {
+        if (d.getState() == 'D') {
             d.setState('S');
         }
     }

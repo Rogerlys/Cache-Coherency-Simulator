@@ -12,6 +12,7 @@ public class DragonProcessor {
     int tag;
     Logger logger;
     InstructionReader reader;
+
     DragonProcessor(int cacheSize, int associativity, int blockSize, String inputFile, DragonBus bus) throws FileNotFoundException {
         logger = new Logger(bus, blockSize);
         dragonCache = new Dragon(cacheSize, associativity, blockSize, bus, logger);
@@ -31,14 +32,6 @@ public class DragonProcessor {
         if (reader.fetchNextIntruction()) {
             dragonCache.executeInstruction(reader.getNextInstruction());
         }
-    }
-
-    //todo change this to tick one clock cycle
-    void executeInstructions() throws IOException {
-        while(reader.fetchNextIntruction()) {
-            dragonCache.executeInstruction(reader.getNextInstruction());
-        }
-        logger.printInfo();
     }
 
     void printInfo() {

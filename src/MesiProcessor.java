@@ -28,14 +28,6 @@ public class MesiProcessor {
         }
     }
 
-    //todo change this to tick one clock cycle
-    void executeInstructions() throws IOException {
-        while(reader.fetchNextIntruction()) {
-            mesiCache.executeInstruction(reader.getNextInstruction());
-        }
-        logger.printInfo();
-    }
-
     void executeInstruction() throws IOException {
         if (reader.fetchNextIntruction()) {
             mesiCache.executeInstruction(reader.getNextInstruction());

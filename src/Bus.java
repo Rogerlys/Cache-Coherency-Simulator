@@ -50,4 +50,8 @@ public class Bus<T extends Protocol> {
     void incrementDataTraffic(int i) {
         trafficData += i;
     }
+
+    void printStats() {
+        System.out.printf("Bus data traffic: %d%n", trafficData);
+    }
 }

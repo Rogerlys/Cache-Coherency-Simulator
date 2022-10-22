@@ -25,6 +25,7 @@ public abstract class Protocol {
     abstract void load(long address);
     abstract void share(long address);
     abstract boolean contains(long address);
+    abstract CacheLine getCacheLine(long address);
 
     int log2(int x) {
         return (int)(Math.log(x) / Math.log(2));
@@ -42,10 +43,20 @@ public abstract class Protocol {
 
     void read(long address) {
         if (contains(address)) {
+            countPrivatePublicAccess(address);
             logger.incrementIdleTime(1);
         } else {
             logger.incrementMiss();
             load(address);
+        }
+    }
+
+    void countPrivatePublicAccess(long address) {
+        CacheLine cacheLine = getCacheLine(address);
+        if (cacheLine.getState() == 'E' || cacheLine.getState() == 'M') {
+            logger.incrementPrivateDataAccess();
+        } else {
+            logger.incrementPublicDataAccess();
         }
     }
 
@@ -59,9 +70,5 @@ public abstract class Protocol {
         } else if(i.value == 2) {
             logger.incrementComputeTime(i.address);
         }
-    }
-
-    public void incrementPrivate() {
-        logger.incrementPrivateDataAccess();
     }
 }

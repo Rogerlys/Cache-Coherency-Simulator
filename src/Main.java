@@ -30,9 +30,7 @@ public class Main {
         int associativity = Integer.parseInt(args[4]);
         int blockSize = Integer.parseInt(args[5]);
 
-        ProtocolName protocolName = ProtocolName.MESI;
         if (args[1].equals("Dragon")) {
-            protocolName = ProtocolName.DRAGON;
             ArrayList<DragonProcessor> processors = new ArrayList<>();
             DragonBus bus = new DragonBus();
             for (int i = 0; i < 4; i++) {
@@ -56,13 +54,19 @@ public class Main {
             }
             long totalClock = 0;
             for (DragonProcessor dp : processors) {
-                dp.printInfo();
                 totalClock += dp.logger.getTotalTime();
             }
-            System.out.println(totalClock);
-            System.out.println(bus.numUpdate);
+
+            System.out.println("Global Stats:");
+            System.out.printf("Number of clock cycles: %d\n", totalClock);
+            bus.printStats();
+            System.out.println();
+            //System.out.printf("data traffic %d/18001696, %f",  bus.trafficData, (bus.trafficData/18001696.0));
+
+            for (DragonProcessor dp : processors) {
+                dp.printInfo();
+            }
         } else if (args[1].equals("MESI")) {
-            protocolName = ProtocolName.MESI;
             ArrayList<MesiProcessor> processors = new ArrayList<>();
             MESIBus bus = new MESIBus();
             for (int i = 0; i < 4; i++) {
@@ -86,12 +90,18 @@ public class Main {
             }
             long totalClock = 0;
             for (MesiProcessor mp : processors) {
-                mp.printInfo();
                 totalClock += mp.logger.getTotalTime();
             }
-            System.out.printf("total clock cycles %d\n", totalClock);
-            System.out.printf("num invalidate:%d\n", bus.numInvalidate);
-            System.out.printf("data traffic %d/18001696, %f",  bus.trafficData, (bus.trafficData/18001696.0));
+
+            System.out.println("Global Stats:");
+            System.out.printf("Number of clock cycles: %d\n", totalClock);
+            bus.printStats();
+            System.out.println();
+            //System.out.printf("data traffic %d/18001696, %f",  bus.trafficData, (bus.trafficData/18001696.0));
+
+            for (MesiProcessor mp : processors) {
+                mp.printInfo();
+            }
         }
     }
 }
