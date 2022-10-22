@@ -4,12 +4,10 @@ public class MESIBus extends Bus<MESI> {
     set all caches to be invalid
      */
     public void invalidate(long address, MESI writer) {
-
+        numInvalidate++;
         for (MESI m : caches) {
             if(m != writer) {
-                if(m.invalidate(address)) {
-                    numInvalidate++;
-                }
+                m.invalidate(address);
             }
 
         }
