@@ -7,6 +7,7 @@ class MESILRUCache extends LRUCache {
         if (head.getDirty()) {
             // write back to cache
             logger.incrementIdleTime(100);
+            logger.incrementDataTraffic();
 
         }
 

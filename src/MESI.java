@@ -28,10 +28,12 @@ public class MESI extends Protocol {
         if (i.value == 0) {
             read(i.address);
             logger.incrementInstructionCount();
+            countPrivatePublicAccess(i.address);
 
         } else if (i .value == 1){
             write(i.address);
             logger.incrementInstructionCount();
+            countPrivatePublicAccess(i.address);
 
         } else if(i.value == 2) {
            logger.incrementComputeTime(i.address);
@@ -41,11 +43,23 @@ public class MESI extends Protocol {
     void read(long address) {
         if (contains(address)) {
             logger.incrementIdleTime(1);
-            logger.incrementPrivateDataAccess();
-            return;
+
+
+        } else {
+            logger.incrementMiss();
+            load(address);
         }
-        logger.incrementMiss();
-        load(address);
+
+
+    }
+
+    void countPrivatePublicAccess(long address) {
+        CacheLine cacheLine = getCacheLine(address);
+        if (cacheLine.getState() == 'E' || cacheLine.getState() == 'M') {
+            logger.incrementPrivateDataAccess();
+        } else {
+            logger.incrementPublicDataAccess();
+        }
     }
 
     void write(long address) {
@@ -54,28 +68,23 @@ public class MESI extends Protocol {
             load(address);
             miss = true;
         } else {
-            logger.incrementPrivateDataAccess();
+
             logger.incrementIdleTime(1);
         }
         CacheLine cacheLine = getCacheLine(address);
         if (cacheLine.getState() != 'M' || cacheLine.getState() != 'E') {
-            if (bus.otherCacheContainsCache(address, this)){
-                bus.invalidate(address);
-
-            }
-
+            bus.invalidate(address, this);
             miss = true;
+
         }
 
         if (miss) {
             logger.incrementMiss();
 
-        } else {
-            logger.incrementPrivateDataAccess();
         }
-
         cacheLine.setDirty();
         cacheLine.setState('M');
+
     }
 
     void load(long address) {
@@ -90,13 +99,14 @@ public class MESI extends Protocol {
             logger.incrementIdleTime(2 * (blockSize / 4));
             bus.incrementDataTraffic(blockSize);
             MESI sharer = bus.getCacheSharer(address, this);
-            //sharer.incrementPrivate();
-            //logger.incrementIdleTime(100);
+            CacheLine cacheLine = getCacheLine(address);
+            cacheLine.setState('S');
         } else {
             // load from memory
             exclusive(address);
             logger.incrementIdleTime(100);
-            logger.incrementPublicDataAccess();
+            CacheLine cacheLine = getCacheLine(address);
+            cacheLine.setState('E');
         }
     }
 

@@ -90,8 +90,8 @@ public class Main {
                 totalClock += mp.logger.getTotalTime();
             }
             System.out.printf("total clock cycles %d\n", totalClock);
-            System.out.printf("num invalidate:%d \n", bus.numInvalidate);
-            System.out.printf("data traffic %d",  bus.trafficData);
+            System.out.printf("num invalidate:%d\n", bus.numInvalidate);
+            System.out.printf("data traffic %d/18001696, %f",  bus.trafficData, (bus.trafficData/18001696.0));
         }
     }
 }
