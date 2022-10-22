@@ -9,8 +9,10 @@ public class Logger {
     long totalInstruction;
     long privateDataAccess;
     long publicDataAccess;
+    Bus bus;
+    int blockSize;
 
-    Logger() {
+    Logger(Bus bus, int blockSize) {
         this.coreNum = coreCount++;
         this.idleTime = 0;
         this.computeTime = 0;
@@ -20,6 +22,8 @@ public class Logger {
         this.totalInstruction = 0;
         this.privateDataAccess = 0;
         this.publicDataAccess = 0;
+        this.bus = bus;
+        this.blockSize = blockSize;
     }
 
     void incrementIdleTime(long i) {
@@ -56,6 +60,10 @@ public class Logger {
 
     void incrementPrivateDataAccess() {
         privateDataAccess++;
+    }
+
+    void incrementDataTraffic() {
+        bus.incrementDataTraffic(blockSize);
     }
 
     void printInfo() {

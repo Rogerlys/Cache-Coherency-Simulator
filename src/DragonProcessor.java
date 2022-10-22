@@ -13,7 +13,7 @@ public class DragonProcessor {
     Logger logger;
     InstructionReader reader;
     DragonProcessor(int cacheSize, int associativity, int blockSize, String inputFile, DragonBus bus) throws FileNotFoundException {
-        logger = new Logger();
+        logger = new Logger(bus, blockSize);
         dragonCache = new Dragon(cacheSize, associativity, blockSize, bus, logger);
         reader = new InstructionReader(inputFile, logger);
     }

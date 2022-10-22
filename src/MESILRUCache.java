@@ -7,7 +7,9 @@ class MESILRUCache extends LRUCache {
         if (head.getDirty()) {
             // write back to cache
             logger.incrementIdleTime(100);
+
         }
+
         hmap.remove(head.key);
         head.next.prev = null;
         head = head.next;

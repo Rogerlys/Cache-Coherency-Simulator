@@ -14,7 +14,7 @@ public class MesiProcessor {
     InstructionReader reader;
 
     MesiProcessor(int cacheSize, int associativity, int blockSize, String inputFile, MESIBus bus) throws FileNotFoundException {
-        logger = new Logger();
+        logger = new Logger(bus, blockSize);
         mesiCache = new MESI(cacheSize, associativity, blockSize, bus, logger);
         reader = new InstructionReader(inputFile, logger);
     }

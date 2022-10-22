@@ -59,11 +59,14 @@ public class MESI extends Protocol {
         }
         CacheLine cacheLine = getCacheLine(address);
         if (cacheLine.getState() != 'M' || cacheLine.getState() != 'E') {
-            bus.invalidate(address);
+            if (bus.otherCacheContainsCache(address, this)){
+                bus.invalidate(address);
+
+            }
 
             miss = true;
         }
-        //bus.invalidate(address);
+
         if (miss) {
             logger.incrementMiss();
 
@@ -80,16 +83,20 @@ public class MESI extends Protocol {
         MESILRUCache cacheSet = sets[setIndex];
         int t = getTag(address);
         cacheSet.put(t);
-        logger.incrementPublicDataAccess();
+
         if (bus.otherCacheContainsCache(address, this)) {
             // cache to cache sharing
             bus.share(address);
-            //logger.incrementIdleTime(2 * (blockSize / 4));
-            logger.incrementIdleTime(100);
+            logger.incrementIdleTime(2 * (blockSize / 4));
+            bus.incrementDataTraffic(blockSize);
+            MESI sharer = bus.getCacheSharer(address, this);
+            //sharer.incrementPrivate();
+            //logger.incrementIdleTime(100);
         } else {
             // load from memory
             exclusive(address);
             logger.incrementIdleTime(100);
+            logger.incrementPublicDataAccess();
         }
     }
 
@@ -103,16 +110,17 @@ public class MESI extends Protocol {
         return cache.getCacheLine(tag);
     }
 
-    void invalidate(long address) {
+    boolean invalidate(long address) {
         int setIndex = getSetIndex(address);
         MESILRUCache cache = sets[setIndex];
         int tag = getTag(address);
         if (!cache.contains(tag)) {
-            return;
+            return false;
         }
 
         CacheLine m =  cache.getCacheLine(tag);
         m.setState('I');
+        return true;
     }
 
     void share(long address) {

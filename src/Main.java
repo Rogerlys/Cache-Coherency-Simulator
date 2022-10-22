@@ -89,8 +89,9 @@ public class Main {
                 mp.printInfo();
                 totalClock += mp.logger.getTotalTime();
             }
-            System.out.println(totalClock);
-            System.out.println(bus.numInvalidate);
+            System.out.printf("total clock cycles %d\n", totalClock);
+            System.out.printf("num invalidate:%d \n", bus.numInvalidate);
+            System.out.printf("data traffic %d",  bus.trafficData);
         }
     }
 }

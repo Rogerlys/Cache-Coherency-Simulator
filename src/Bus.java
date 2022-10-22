@@ -35,4 +35,19 @@ public class Bus<T extends Protocol> {
         }
         return false;
     }
+
+    public <P extends Protocol> T getCacheSharer(long address, P p) {
+        for (T t : caches) {
+            if (t != p) {
+                if (t.contains(address)) {
+                   return t;
+                }
+            }
+        }
+        return null;
+    }
+
+    void incrementDataTraffic(int i) {
+        trafficData += i;
+    }
 }

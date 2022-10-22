@@ -60,4 +60,8 @@ public abstract class Protocol {
             logger.incrementComputeTime(i.address);
         }
     }
+
+    public void incrementPrivate() {
+        logger.incrementPrivateDataAccess();
+    }
 }

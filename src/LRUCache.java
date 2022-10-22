@@ -35,6 +35,7 @@ public abstract class LRUCache {
 
         if (hmap.size() > capacity) {
             removeHead();
+            //logger.incrementDataTraffic();
         }
     }
 
