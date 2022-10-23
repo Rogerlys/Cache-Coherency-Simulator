@@ -1,17 +1,7 @@
-public class MESI extends Protocol {
-    MESIBus bus;
-    MESILRUCache[] sets;
+public class MOESI extends MESI {
 
-    MESI(int cacheSize, int associativity, int blockSize, MESIBus bus, Logger logger) {
-        super(cacheSize, associativity, blockSize, logger);
-        this.bus = bus;
-        sets = new MESILRUCache[numSets];
-        for (int i = 0; i < numSets;i++) {
-            sets[i] = new MESILRUCache(associativity, logger);
-        }
-        this.bus = bus;
-        this.logger = logger;
-
+    MOESI(int cacheSize, int associativity, int blockSize, MOESIBus bus, Logger logger) {
+        super(cacheSize, associativity, blockSize, bus, logger);
     }
 
     void write(long address) {
@@ -24,18 +14,22 @@ public class MESI extends Protocol {
             logger.incrementIdleTime(1);
         }
         CacheLine cacheLine = getCacheLine(address);
+
+        //difference
         if (cacheLine.getState() != 'M' || cacheLine.getState() != 'E') {
-            bus.invalidate(address, this);
+            //bus.invalidate(address, this);
             //miss = true;
-
+            cacheLine.setState('M');
+        } else {
+            cacheLine.setState('O');
         }
-
+        bus.share(address);
         if (miss) {
             logger.incrementMiss();
 
         }
         cacheLine.setDirty();
-        cacheLine.setState('M');
+
         countPrivatePublicAccess(address);
 
     }
@@ -97,7 +91,11 @@ public class MESI extends Protocol {
         }
 
         CacheLine m = cache.getCacheLine(tag);
-        m.setState('S');
+        //difference
+
+            m.setState('S');
+
+
     }
 
     void exclusive(long address) {

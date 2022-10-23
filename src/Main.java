@@ -10,7 +10,14 @@ public class Main {
         }
         return false;
     }
-
+    private static boolean continueMoesiExecution(ArrayList<MOESIProcessor> processors) {
+        for (MOESIProcessor mp : processors) {
+            if (mp.hasNext()) {
+                return true;
+            }
+        }
+        return false;
+    }
     private static boolean continueDragonExecution(ArrayList<DragonProcessor> processors) {
         for (DragonProcessor dp : processors) {
             if (dp.hasNext()) {
@@ -100,6 +107,42 @@ public class Main {
             //System.out.printf("data traffic %d/18001696, %f",  bus.trafficData, (bus.trafficData/18001696.0));
 
             for (MesiProcessor mp : processors) {
+                mp.printInfo();
+            }
+        }else if (args[1].equals("MOESI")) {
+            ArrayList<MOESIProcessor> processors = new ArrayList<>();
+            MOESIBus bus = new MOESIBus();
+            for (int i = 0; i < 4; i++) {
+                //"bodytrack_four/bodytrack_0.data"
+                String filePath = String.format("%s_four/%s_%d.data", dataType, dataType, i);
+                MOESIProcessor processor = new MOESIProcessor(cacheSize, associativity, blockSize, filePath, bus);
+                processors.add(processor);
+            }
+
+            for (MOESIProcessor mp : processors) {
+                bus.addCache(mp.moesiCache);
+            }
+
+            long clockCycle = 0;
+
+            while (continueMoesiExecution(processors)) {
+                for (MOESIProcessor mp : processors) {
+                    mp.executeOneCycle(clockCycle);
+                }
+                clockCycle++;
+            }
+            long totalClock = 0;
+            for (MOESIProcessor mp : processors) {
+                totalClock += mp.logger.getTotalTime();
+            }
+
+            System.out.println("Global Stats:");
+            System.out.printf("Number of clock cycles: %d\n", totalClock);
+            bus.printStats();
+            System.out.println();
+            //System.out.printf("data traffic %d/18001696, %f",  bus.trafficData, (bus.trafficData/18001696.0));
+
+            for (MOESIProcessor mp : processors) {
                 mp.printInfo();
             }
         }

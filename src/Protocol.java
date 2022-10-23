@@ -43,12 +43,13 @@ public abstract class Protocol {
 
     void read(long address) {
         if (contains(address)) {
-            countPrivatePublicAccess(address);
+
             logger.incrementIdleTime(1);
         } else {
             logger.incrementMiss();
             load(address);
         }
+        countPrivatePublicAccess(address);
     }
 
     void countPrivatePublicAccess(long address) {

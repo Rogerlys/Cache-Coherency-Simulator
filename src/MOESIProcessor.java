@@ -1,14 +1,14 @@
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
-public class MesiProcessor {
-    MESI mesiCache;
+public class MOESIProcessor {
+    MOESI moesiCache;
     Logger logger;
     InstructionReader reader;
 
-    MesiProcessor(int cacheSize, int associativity, int blockSize, String inputFile, MESIBus bus) throws FileNotFoundException {
+    MOESIProcessor(int cacheSize, int associativity, int blockSize, String inputFile, MOESIBus bus) throws FileNotFoundException {
         logger = new Logger(bus, blockSize);
-        mesiCache = new MESI(cacheSize, associativity, blockSize, bus, logger);
+        moesiCache = new MOESI(cacheSize, associativity, blockSize, bus, logger);
         reader = new InstructionReader(inputFile, logger);
     }
 
@@ -23,7 +23,7 @@ public class MesiProcessor {
 
     void executeInstruction() throws IOException {
         if (reader.fetchNextIntruction()) {
-            mesiCache.executeInstruction(reader.getNextInstruction());
+            moesiCache.executeInstruction(reader.getNextInstruction());
         }
     }
 
