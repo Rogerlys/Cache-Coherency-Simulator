@@ -98,6 +98,7 @@ public class MESI extends Protocol {
 
         CacheLine m = cache.getCacheLine(tag);
         m.setState('S');
+        logger.incrementIdleTime(2 * (blockSize / 4));
     }
 
     void exclusive(long address) {

@@ -25,12 +25,14 @@ public class Dragon extends Protocol {
             if (bus.otherCacheContainsCache(address, this)) {
                 bus.update(address, blockSize);
                 cacheLine.setState('D');
+                logger.incrementIdleTime(2 * (blockSize / 4));
             } else {
                 cacheLine.setState('M');
             }
         } else if (cacheLine.getState() == 'D') {
             if (bus.otherCacheContainsCache(address, this)) {
                 bus.update(address, blockSize);
+                logger.incrementIdleTime(2 * (blockSize / 4));
             } else {
                 cacheLine.setState('M');
             }
@@ -70,6 +72,7 @@ public class Dragon extends Protocol {
         if (!cache.contains(tag)) return;
 
         CacheLine d = cache.getCacheLine(tag);
+        logger.incrementIdleTime(2 * (blockSize / 4));
         if (d.getState() == 'M') {
             d.setState('D');
         } else if (d.getState() == 'E') {

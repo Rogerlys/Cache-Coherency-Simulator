@@ -43,7 +43,6 @@ public abstract class Protocol {
 
     void read(long address) {
         if (contains(address)) {
-
             logger.incrementIdleTime(1);
         } else {
             logger.incrementMiss();
