@@ -6,6 +6,26 @@ public class MOESI extends MESI {
         this.moesiBus = bus;
     }
 
+    void load(long address) {
+        int setIndex = getSetIndex(address);
+        MESILRUCache cacheSet = sets[setIndex];
+        int t = getTag(address);
+        cacheSet.put(t);
+
+        if (moesiBus.otherCacheContainsCache(address, this)) {
+            // cache to cache sharing
+            moesiBus.share(address);
+            logger.incrementIdleTime(2 * (blockSize / 4));
+            moesiBus.incrementDataTraffic(blockSize);
+            CacheLine cacheLine = getCacheLine(address);
+            cacheLine.setState('S');
+        } else {
+            // load from memory
+            exclusive(address);
+            logger.incrementIdleTime(100);
+        }
+    }
+
     void write(long address) {
         if (!contains(address)) {
             load(address);
@@ -43,7 +63,7 @@ public class MOESI extends MESI {
         CacheLine m =  cache.getCacheLine(tag);
         if (m.getState() == 'O' || m.getState() == 'M') {
             logger.incrementIdleTime(100);
-            bus.incrementDataTraffic(blockSize);
+            moesiBus.incrementDataTraffic(blockSize);
             m.isDirty = false;
         }
         m.setState('I');
@@ -58,6 +78,6 @@ public class MOESI extends MESI {
         CacheLine m = cache.getCacheLine(tag);
         if (m.getState() != 'O') m.setState('S');
         logger.incrementIdleTime(2 * (blockSize / 4));
-        bus.incrementDataTraffic(blockSize);
+        moesiBus.incrementDataTraffic(blockSize);
     }
 }
