@@ -1,5 +1,5 @@
 public class Logger {
-    private static int coreCount;
+    public static int coreCount;
     int coreNum;
     long idleTime;
     long computeTime;
@@ -68,14 +68,14 @@ public class Logger {
 
     void printInfo() {
         System.out.printf("Core: %d%n", coreNum);
-        System.out.printf("- Execution cycles for core: %d%n", idleTime + computeTime);
-        System.out.printf("- Number of compute cycles: %d%n", computeTime);
-        System.out.printf("- Number of load instructions: %d%n", numLoad);
-        System.out.printf("- Number of store instructions: %d%n", numStore);
-        System.out.printf("- Number of idle cycles: %d%n", idleTime);
-        System.out.printf("- Data cache miss rate: %d/%d %f%n", numMiss, totalInstruction, (double) numMiss / totalInstruction);
-        System.out.printf("- Number of private data access: %d%n", privateDataAccess);
-        System.out.printf("- Number of shared data access: %d", publicDataAccess);
+        System.out.printf("%d%n", idleTime + computeTime);
+        System.out.printf("%d%n", computeTime);
+        System.out.printf("%d%n", numLoad);
+        System.out.printf("%d%n", numStore);
+        System.out.printf("%d%n", idleTime);
+        System.out.printf("%d/%d%n%f%n", numMiss, totalInstruction, (double) numMiss / totalInstruction);
+        System.out.printf("%d%n", privateDataAccess);
+        System.out.printf("%d", publicDataAccess);
         System.out.print("\n\n");
     }
 }
