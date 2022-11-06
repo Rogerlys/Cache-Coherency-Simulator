@@ -1,24 +1,13 @@
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
-public class MOESIProcessor {
+public class MOESIProcessor extends Processor {
     MOESI moesiCache;
-    Logger logger;
-    InstructionReader reader;
 
     MOESIProcessor(int cacheSize, int associativity, int blockSize, String inputFile, MOESIBus bus) throws FileNotFoundException {
-        logger = new Logger(bus, blockSize);
-        moesiCache = new MOESI(cacheSize, associativity, blockSize, bus, logger);
-        reader = new InstructionReader(inputFile, logger);
-    }
-
-    void executeOneCycle(long clockCycle) throws IOException {
-        if (logger.getTotalTime() > clockCycle) {
-            return;
-        }
-        if (reader.hasNext) {
-            executeInstruction();
-        }
+        super.logger = new Logger(bus, blockSize);
+        moesiCache = new MOESI(cacheSize, associativity, blockSize, bus, super.logger);
+        super.reader = new InstructionReader(inputFile, super.logger);
     }
 
     void executeInstruction() throws IOException {
@@ -26,13 +15,4 @@ public class MOESIProcessor {
             moesiCache.executeInstruction(reader.getNextInstruction());
         }
     }
-
-    void printInfo() {
-        logger.printInfo();
-    }
-
-    boolean hasNext() {
-        return reader.hasNext;
-    }
-
 }
