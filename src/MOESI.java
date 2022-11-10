@@ -76,7 +76,8 @@ public class MOESI extends MESI {
         if (!cache.contains(tag)) return;
 
         CacheLine m = cache.getCacheLine(tag);
-        if (m.getState() != 'O') m.setState('S');
+        if (m.getState() == 'M') m.setState('O');
+        else if (m.getState() != 'O') m.setState('S');
         logger.incrementIdleTime(2 * (blockSize / 4));
         moesiBus.incrementDataTraffic(blockSize);
     }
