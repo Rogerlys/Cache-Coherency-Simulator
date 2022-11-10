@@ -7,6 +7,7 @@ public class DragonLRUCache extends LRUCache {
         if (head.getState() == 'M' || head.getState() == 'D') {
             // write back to cache
             logger.incrementIdleTime(100);
+            logger.incrementDataTraffic();
         }
         hmap.remove(head.key);
         head.next.prev = null;

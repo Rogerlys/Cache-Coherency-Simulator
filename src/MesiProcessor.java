@@ -15,8 +15,4 @@ public class MesiProcessor extends Processor {
             mesiCache.executeInstruction(reader.getNextInstruction());
         }
     }
-
-    void printInfo() {
-        logger.printInfo();
-    }
 }
