@@ -6,13 +6,16 @@ public class MESIBus extends Bus<MESI> {
         numInvalidate = 0;
     }
 
-    public void invalidate(long address, MESI writer) {
+    public boolean invalidate(long address, MESI writer) {
         numInvalidate++;
+        boolean waitForFlush = false;
         for (MESI m : caches) {
             if (m != writer) {
                 m.invalidate(address);
+                waitForFlush = true;
             }
         }
+        return waitForFlush;
     }
 
     public void printStats() {

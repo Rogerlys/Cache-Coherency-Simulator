@@ -54,11 +54,11 @@ public class MOESI extends MESI {
         countPrivatePublicAccess(address);
     }
 
-    void invalidate(long address) {
+    boolean invalidate(long address) {
         int setIndex = getSetIndex(address);
         MESILRUCache cache = sets[setIndex];
         int tag = getTag(address);
-        if (!cache.contains(tag)) return;
+        if (!cache.contains(tag)) return false;
 
         CacheLine m =  cache.getCacheLine(tag);
         if (m.getState() == 'O' || m.getState() == 'M') {
@@ -67,6 +67,7 @@ public class MOESI extends MESI {
             m.isDirty = false;
         }
         m.setState('I');
+        return false;
     }
 
     void share(long address) {
@@ -76,8 +77,11 @@ public class MOESI extends MESI {
         if (!cache.contains(tag)) return;
 
         CacheLine m = cache.getCacheLine(tag);
+
         if (m.getState() == 'M') m.setState('O');
-        else if (m.getState() != 'O') m.setState('S');
+        else if (m.getState() != 'O' && m.getState() != 'I') m.setState('S');
+
+
         logger.incrementIdleTime(2 * (blockSize / 4));
         moesiBus.incrementDataTraffic(blockSize);
     }

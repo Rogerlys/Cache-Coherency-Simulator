@@ -34,6 +34,10 @@ public abstract class LRUCache {
         }
 
         if (hmap.size() > capacity) {
+            int invalidTag = findInvalid();
+            if (invalidTag != -1) {
+                moveToHead(invalidTag);
+            }
             removeHead();
 
         }
@@ -76,5 +80,41 @@ public abstract class LRUCache {
 
     public CacheLine getCacheLine(int tag) {
         return hmap.get(tag);
+    }
+
+    void moveToHead(int key) {
+        CacheLine n = hmap.get(key);
+        if(n == end) {
+            end = n.prev;
+            end.next = null;
+            n.prev = null;
+            head.prev = head;
+            n.next = head;
+            head = end;
+        } else if (n == head) {
+
+        } else {
+            if (n.prev != null) {
+                n.prev.next = n.next;
+            }
+            if (n.next != null) {
+                n.next.prev = n.prev;
+            }
+            n.prev = null;
+            head.prev = n;
+            n.next = head;
+            head = n;
+        }
+    }
+
+    int findInvalid() {
+        CacheLine h = head;
+        while (h != null) {
+            if (h.getState() == 'I') {
+                return h.key;
+            }
+            h = h.next;
+        }
+        return -1;
     }
 }
