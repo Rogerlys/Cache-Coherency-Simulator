@@ -26,8 +26,6 @@ public class MESI extends Protocol {
         CacheLine cacheLine = getCacheLine(address);
         if (cacheLine.getState() != 'M' || cacheLine.getState() != 'E') {
             bus.invalidate(address, this);
-            //miss = true;
-
         }
 
         if (miss) {
@@ -51,9 +49,7 @@ public class MESI extends Protocol {
             bus.share(address);
             //decide if we want to have cache to cache
             logger.incrementIdleTime(2 * (blockSize / 4));
-            //logger.incrementIdleTime(100);
             bus.incrementDataTraffic(blockSize);
-            MESI sharer = bus.getCacheSharer(address, this);
             CacheLine cacheLine = getCacheLine(address);
             cacheLine.setState('S');
         } else {
@@ -82,14 +78,14 @@ public class MESI extends Protocol {
         }
 
         CacheLine m =  cache.getCacheLine(tag);
-        if (m.getState() == 'M') {
+        if (m.isDirty && m.getState() == 'M') {
             logger.incrementIdleTime(100);
             bus.incrementDataTraffic(blockSize);
             m.isDirty = false;
-            return false;
+            return true;
         }
         m.setState('I');
-        return true;
+        return false;
     }
 
     void share(long address) {
@@ -101,7 +97,7 @@ public class MESI extends Protocol {
         }
 
         CacheLine m = cache.getCacheLine(tag);
-        if (m.getState() == 'M') {
+        if (m.getDirty()) {
             logger.incrementIdleTime(100);
             m.isDirty = false;
         }
