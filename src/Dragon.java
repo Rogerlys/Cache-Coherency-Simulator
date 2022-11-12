@@ -50,7 +50,6 @@ public class Dragon extends Protocol {
             // cache to cache sharing
             bus.share(address);
             logger.incrementIdleTime(2 * (blockSize / 4));
-            logger.incrementDataTraffic();
         } else {
             // load from memory
             exclusive(address);
@@ -73,6 +72,7 @@ public class Dragon extends Protocol {
 
         CacheLine d = cache.getCacheLine(tag);
         logger.incrementIdleTime(2 * (blockSize / 4));
+        logger.incrementDataTraffic();
         if (d.getState() == 'M') {
             d.setState('D');
         } else if (d.getState() == 'E') {
