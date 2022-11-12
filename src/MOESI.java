@@ -37,14 +37,7 @@ public class MOESI extends MESI {
         
         if (cacheLine.getState() == 'E') {
             cacheLine.setState('M');
-        } else if (cacheLine.getState() == 'O') {
-            if (moesiBus.otherCacheContainsCache(address, this)) {
-                moesiBus.update(address, blockSize);
-                logger.incrementIdleTime(2 * (blockSize / 4));
-            } else {
-                cacheLine.setState('M');
-            }
-        } else if (cacheLine.getState() == 'S') {
+        } else if (cacheLine.getState() == 'O' || cacheLine.getState() == 'S') {
             if (moesiBus.otherCacheContainsCache(address, this)) {
                 moesiBus.invalidate(address, this);
             }
