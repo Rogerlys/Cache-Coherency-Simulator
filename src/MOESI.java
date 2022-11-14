@@ -60,8 +60,6 @@ public class MOESI extends MESI {
 
         CacheLine m =  cache.getCacheLine(tag);
         if ( m.isDirty && (m.getState() == 'O' || m.getState() == 'M') ) {
-            //logger.incrementIdleTime(100);
-            moesiBus.incrementDataTraffic(blockSize);
             m.isDirty = false;
             return true;
         }
