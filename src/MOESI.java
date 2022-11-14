@@ -4,6 +4,10 @@ public class MOESI extends MESI {
     MOESI(int cacheSize, int associativity, int blockSize, MOESIBus bus, Logger logger) {
         super(cacheSize, associativity, blockSize, null, logger);
         this.moesiBus = bus;
+
+        for (int i = 0; i < numSets;i++) {
+            sets[i] = new MOESILRUCache(associativity, logger);
+        }
     }
 
     void load(long address) {
@@ -37,7 +41,8 @@ public class MOESI extends MESI {
         
         if (cacheLine.getState() == 'E') {
             cacheLine.setState('M');
-        } else if (cacheLine.getState() == 'O' || cacheLine.getState() == 'S') {
+        }
+        else if ( cacheLine.getState() == 'S' || cacheLine.getState() == 'O') {
             if (moesiBus.otherCacheContainsCache(address, this)) {
                 moesiBus.invalidate(address, this);
             }
@@ -54,10 +59,11 @@ public class MOESI extends MESI {
         if (!cache.contains(tag)) return false;
 
         CacheLine m =  cache.getCacheLine(tag);
-        if (m.getState() == 'O' || m.getState() == 'M') {
-            logger.incrementIdleTime(100);
+        if ( m.isDirty && (m.getState() == 'O' || m.getState() == 'M') ) {
+            //logger.incrementIdleTime(100);
             moesiBus.incrementDataTraffic(blockSize);
             m.isDirty = false;
+            return true;
         }
         m.setState('I');
         return false;
@@ -67,12 +73,17 @@ public class MOESI extends MESI {
         int setIndex = getSetIndex(address);
         MESILRUCache cache = sets[setIndex];
         int tag = getTag(address);
-        if (!cache.contains(tag)) return;
+        if (!cache.contains(tag))
+            return;
 
         CacheLine m = cache.getCacheLine(tag);
 
-        if (m.getState() == 'M') m.setState('O');
-        else if (m.getState() != 'O' && m.getState() != 'I') m.setState('S');
+        if (m.getState() == 'M') {
+            m.setState('O');
+        }
+        else if (m.getState() != 'O' && m.getState() != 'I') {
+            m.setState('S');
+        }
 
 
         logger.incrementIdleTime(2 * (blockSize / 4));
