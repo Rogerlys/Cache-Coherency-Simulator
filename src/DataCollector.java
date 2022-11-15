@@ -30,7 +30,7 @@ public class DataCollector {
     public static void main(String[] args)  throws IOException {
         //String[] Protocol = {"MESI", "Dragon", "MOESI"};
 
-        String[] Protocol = {"MOESI"};
+        String[] Protocol = {"MESI"};
         //String[] InputFiles = { "blackscholes"};
         String[] InputFiles = {"bodytrack", "blackscholes", "fluidanimate"};
         //String[] CacheSize = {"256","512", "1024", "2048", "4096", "8196"};
