@@ -41,7 +41,6 @@ public class Main {
             ArrayList<DragonProcessor> processors = new ArrayList<>();
             DragonBus bus = new DragonBus();
             for (int i = 0; i < 4; i++) {
-                //"bodytrack_four/bodytrack_0.data"
                 String filePath = String.format("%s_four/%s_%d.data", dataType, dataType, i);
                 DragonProcessor processor = new DragonProcessor(cacheSize, associativity, blockSize,  filePath, bus);
                 processors.add(processor);
@@ -68,7 +67,6 @@ public class Main {
             System.out.printf("Number of clock cycles: %d\n", totalClock);
             bus.printStats();
             System.out.println();
-            //System.out.printf("data traffic %d/18001696, %f",  bus.trafficData, (bus.trafficData/18001696.0));
 
             for (DragonProcessor dp : processors) {
                 dp.printInfo();
@@ -77,7 +75,7 @@ public class Main {
             ArrayList<MesiProcessor> processors = new ArrayList<>();
             MESIBus bus = new MESIBus();
             for (int i = 0; i < 4; i++) {
-                //"bodytrack_four/bodytrack_0.data"
+
                 String filePath = String.format("%s_four/%s_%d.data", dataType, dataType, i);
                 MesiProcessor processor = new MesiProcessor(cacheSize, associativity, blockSize,  filePath, bus);
                 processors.add(processor);
@@ -104,7 +102,6 @@ public class Main {
             System.out.printf("Number of clock cycles: %d\n", totalClock);
             bus.printStats();
             System.out.println();
-            //System.out.printf("data traffic %d/18001696, %f",  bus.trafficData, (bus.trafficData/18001696.0));
 
             for (MesiProcessor mp : processors) {
                 mp.printInfo();
@@ -113,7 +110,7 @@ public class Main {
             ArrayList<MOESIProcessor> processors = new ArrayList<>();
             MOESIBus bus = new MOESIBus();
             for (int i = 0; i < 4; i++) {
-                //"bodytrack_four/bodytrack_0.data"
+
                 String filePath = String.format("%s_four/%s_%d.data", dataType, dataType, i);
                 MOESIProcessor processor = new MOESIProcessor(cacheSize, associativity, blockSize, filePath, bus);
                 processors.add(processor);
@@ -140,7 +137,6 @@ public class Main {
             System.out.printf("Number of clock cycles: %d\n", totalClock);
             bus.printStats();
             System.out.println();
-            //System.out.printf("data traffic %d/18001696, %f",  bus.trafficData, (bus.trafficData/18001696.0));
 
             for (MOESIProcessor mp : processors) {
                 mp.printInfo();

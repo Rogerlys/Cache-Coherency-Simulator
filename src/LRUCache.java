@@ -53,6 +53,14 @@ public abstract class LRUCache {
         return true;
     }
 
+    public boolean containsO(int key) {
+        if (!hmap.containsKey(key) || hmap.get(key).getState() != 'O') {
+            return false;
+        }
+
+        return true;
+    }
+
     void moveToEnd(int key) {
         CacheLine n = hmap.get(key);
         if(n == end) {
