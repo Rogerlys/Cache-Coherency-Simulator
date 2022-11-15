@@ -28,9 +28,11 @@ public class DataCollector {
     }
 
     public static void main(String[] args)  throws IOException {
-        String[] Protocol = {"MESI", "Dragon", "MOESI"};
-        String[] InputFiles = { "blackscholes"};
-        //String[] InputFiles = {"bodytrack", "blackscholes", "fluidanimate"};
+        //String[] Protocol = {"MESI", "Dragon", "MOESI"};
+
+        String[] Protocol = {"MOESI"};
+        //String[] InputFiles = { "blackscholes"};
+        String[] InputFiles = {"bodytrack", "blackscholes", "fluidanimate"};
         //String[] CacheSize = {"256","512", "1024", "2048", "4096", "8196"};
         String[] CacheSize = { "4096"};
         //String[] Associativity = {"1","2", "4", "8", "16", "32"};
