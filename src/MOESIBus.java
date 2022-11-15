@@ -23,10 +23,10 @@ public class MOESIBus extends Bus<MOESI> {
 
     private MESI getCacheContainingOState(long address) {
         for (MESI m : caches) {
-            if (!m.contains(address)) continue;
+
             MESILRUCache cache = m.sets[m.getSetIndex(address)];
             int tag = m.getTag(address);
-            if (cache.getCacheLine(tag).getState() == 'O')
+            if (cache.containsO(tag))
                 return m;
         }
         return null;

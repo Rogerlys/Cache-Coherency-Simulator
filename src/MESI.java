@@ -128,4 +128,12 @@ public class MESI extends Protocol {
         }
         return cache.getCacheLine(tag).getState() != 'I';
     }
+
+    public boolean containsO(long address) {
+        int setIndex = getSetIndex(address);
+        MESILRUCache cache = sets[setIndex];
+        int tag = getTag(address);
+
+        return cache.containsO(tag);
+    }
 }
