@@ -1,4 +1,4 @@
-# CS4223 assignment 2
+# Cache-Coherency-Simulator
 
 1) Make sure that java is installed
 2) Change directory to the source directory
